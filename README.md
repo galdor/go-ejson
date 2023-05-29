@@ -1,6 +1,9 @@
 # go-ejson
 ## Introduction
-The EJSON library contains multiple utilities to work with JSON.
+The EJSON library contains multiple utilities to work with JSON:
+
+- An implementation of RFC 6901 providing utilities to manipulate JSON
+  pointers.
 
 ## Usage
 Refer to the [Go package
