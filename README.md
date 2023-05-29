@@ -4,6 +4,8 @@ The EJSON library contains multiple utilities to work with JSON:
 
 - An implementation of RFC 6901 providing utilities to manipulate JSON
   pointers.
+- A validator to write extended validation code for the content of your JSON
+  structures.
 
 ## Usage
 Refer to the [Go package
