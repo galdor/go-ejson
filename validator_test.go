@@ -7,9 +7,10 @@ import (
 )
 
 type TestFoo struct {
-	String string
-	Bar    *TestBar
-	Bars   []*TestBar
+	String   string
+	Bar      *TestBar
+	Bars     []*TestBar
+	BarTable map[string]*TestBar
 }
 
 type TestBar struct {
@@ -21,11 +22,8 @@ func (foo *TestFoo) ValidateJSON(v *Validator) {
 
 	v.CheckOptionalObject("Bar", foo.Bar)
 
-	v.WithChild("Bars", func() {
-		for i, bar := range foo.Bars {
-			v.CheckObject(i, bar)
-		}
-	})
+	v.CheckObjectArray("Bars", foo.Bars)
+	v.CheckObjectMap("BarTable", foo.BarTable)
 }
 
 func (bar *TestBar) ValidateJSON(v *Validator) {
@@ -51,6 +49,10 @@ func TestValidate(t *testing.T) {
 		Bars: []*TestBar{
 			{Integers: []int{4}},
 			{Integers: []int{5, 6}},
+		},
+		BarTable: map[string]*TestBar{
+			"foo": {Integers: []int{4}},
+			"bar": {Integers: []int{5, 6}},
 		},
 	}
 
@@ -113,12 +115,15 @@ func TestValidate(t *testing.T) {
 			{Integers: []int{15}},
 			{Integers: []int{5, 20}},
 		},
+		BarTable: map[string]*TestBar{
+			"foo": {Integers: []int{15}},
+		},
 	}
 
 	err = Validate(&data)
 
 	if assert.ErrorAs(err, &validationErrs) {
-		if assert.Equal(3, len(validationErrs)) {
+		if assert.Equal(4, len(validationErrs)) {
 			validationErr = validationErrs[0]
 			assert.Equal("/Bars/0", validationErr.Pointer.String())
 			assert.Equal("missingValue", validationErr.Code)
@@ -129,6 +134,11 @@ func TestValidate(t *testing.T) {
 
 			validationErr = validationErrs[2]
 			assert.Equal("/Bars/2/Integers/1", validationErr.Pointer.String())
+			assert.Equal("integerTooLarge", validationErr.Code)
+
+			validationErr = validationErrs[3]
+			assert.Equal("/BarTable/foo/Integers/0",
+				validationErr.Pointer.String())
 			assert.Equal("integerTooLarge", validationErr.Code)
 		}
 	}

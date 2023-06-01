@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"reflect"
 	"regexp"
+	"strconv"
 )
 
 type ValidationError struct {
@@ -196,6 +197,60 @@ func (v *Validator) CheckObject(token interface{}, value interface{}) bool {
 	}
 
 	return v.doCheckObject(token, value)
+}
+
+func (v *Validator) CheckObjectArray(token interface{}, value interface{}) bool {
+	valueType := reflect.TypeOf(value)
+	kind := valueType.Kind()
+
+	if kind != reflect.Array && kind != reflect.Slice {
+		panic(fmt.Sprintf("value %#v (%T) is not an array or slice",
+			value, value))
+	}
+
+	ok := true
+
+	v.WithChild(token, func() {
+		values := reflect.ValueOf(value)
+
+		for i := 0; i < values.Len(); i++ {
+			child := values.Index(i).Interface()
+			childOk := v.CheckObject(strconv.Itoa(i), child)
+			ok = ok && childOk
+		}
+	})
+
+	return ok
+}
+
+func (v *Validator) CheckObjectMap(token interface{}, value interface{}) bool {
+	valueType := reflect.TypeOf(value)
+	if valueType.Kind() != reflect.Map {
+		panic(fmt.Sprintf("value %#v (%T) is not a map", value, value))
+	}
+
+	ok := true
+
+	v.WithChild(token, func() {
+		values := reflect.ValueOf(value)
+
+		iter := values.MapRange()
+		for iter.Next() {
+			key := iter.Key()
+			if key.Kind() != reflect.String {
+				panic(fmt.Sprintf("value %#v (%T) is a map whose keys are "+
+					"not strings", value, value))
+			}
+			keyString := key.Interface().(string)
+
+			value := iter.Value().Interface()
+
+			valueOk := v.CheckObject(keyString, value)
+			ok = ok && valueOk
+		}
+	})
+
+	return ok
 }
 
 func (v *Validator) doCheckObject(token interface{}, value interface{}) bool {
