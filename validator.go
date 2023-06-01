@@ -149,6 +149,34 @@ func (v *Validator) CheckStringNotEmpty(token interface{}, s string) bool {
 		"missing or empty string")
 }
 
+func (v *Validator) CheckStringValue(token interface{}, s string, ss []string) bool {
+	found := false
+
+	for i := range ss {
+		if s == ss[i] {
+			found = true
+		}
+	}
+
+	if !found {
+		var buf bytes.Buffer
+
+		buf.WriteString("value must be one of the following strings: ")
+
+		for i := range ss {
+			if i > 0 {
+				buf.WriteString(", ")
+			}
+
+			buf.WriteString(ss[i])
+		}
+
+		v.AddError(token, "invalidValue", "%s", buf.String())
+	}
+
+	return found
+}
+
 func (v *Validator) CheckStringMatch(token interface{}, s string, re *regexp.Regexp) bool {
 	return v.CheckStringMatch2(token, s, re, "invalidStringFormat",
 		"string must match the following regular expression: %s",

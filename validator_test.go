@@ -11,6 +11,7 @@ type TestFoo struct {
 	Bar      *TestBar
 	Bars     []*TestBar
 	BarTable map[string]*TestBar
+	Tag      string
 }
 
 type TestBar struct {
@@ -19,11 +20,10 @@ type TestBar struct {
 
 func (foo *TestFoo) ValidateJSON(v *Validator) {
 	v.CheckStringLengthMin("String", foo.String, 3)
-
 	v.CheckOptionalObject("Bar", foo.Bar)
-
 	v.CheckObjectArray("Bars", foo.Bars)
 	v.CheckObjectMap("BarTable", foo.BarTable)
+	v.CheckStringValue("Tag", foo.Tag, []string{"", "a", "b", "c"})
 }
 
 func (bar *TestBar) ValidateJSON(v *Validator) {
@@ -79,6 +79,22 @@ func TestValidate(t *testing.T) {
 			validationErr = validationErrs[0]
 			assert.Equal("/String", validationErr.Pointer.String())
 			assert.Equal("stringTooShort", validationErr.Code)
+		}
+	}
+
+	// String value violation
+	data = TestFoo{
+		String: "abcdef",
+		Tag:    "xyz",
+	}
+
+	err = Validate(&data)
+
+	if assert.ErrorAs(err, &validationErrs) {
+		if assert.Equal(1, len(validationErrs)) {
+			validationErr = validationErrs[0]
+			assert.Equal("/Tag", validationErr.Pointer.String())
+			assert.Equal("invalidValue", validationErr.Code)
 		}
 	}
 
