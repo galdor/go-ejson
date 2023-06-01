@@ -149,11 +149,29 @@ func (v *Validator) CheckStringNotEmpty(token interface{}, s string) bool {
 		"missing or empty string")
 }
 
-func (v *Validator) CheckStringValue(token interface{}, s string, ss []string) bool {
-	found := false
+func (v *Validator) CheckStringValue(token interface{}, value interface{}, values interface{}) bool {
+	valueType := reflect.TypeOf(value)
+	if valueType.Kind() != reflect.String {
+		panic(fmt.Sprintf("value %#v (%T) is not a string", value, value))
+	}
 
-	for i := range ss {
-		if s == ss[i] {
+	s := reflect.ValueOf(value).String()
+
+	valuesType := reflect.TypeOf(values)
+	if valuesType.Kind() != reflect.Slice {
+		panic(fmt.Sprintf("values %#v (%T) are not a slice", values, values))
+	}
+	if valuesType.Elem().Kind() != reflect.String {
+		panic(fmt.Sprintf("values %#v (%T) are not a slice of strings",
+			values, values))
+	}
+
+	valuesValue := reflect.ValueOf(values)
+
+	found := false
+	for i := 0; i < valuesValue.Len(); i++ {
+		s2 := valuesValue.Index(i).String()
+		if s == s2 {
 			found = true
 		}
 	}
@@ -163,12 +181,13 @@ func (v *Validator) CheckStringValue(token interface{}, s string, ss []string) b
 
 		buf.WriteString("value must be one of the following strings: ")
 
-		for i := range ss {
+		for i := 0; i < valuesValue.Len(); i++ {
 			if i > 0 {
 				buf.WriteString(", ")
 			}
 
-			buf.WriteString(ss[i])
+			s2 := valuesValue.Index(i).String()
+			buf.WriteString(s2)
 		}
 
 		v.AddError(token, "invalidValue", "%s", buf.String())
