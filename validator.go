@@ -229,6 +229,55 @@ func (v *Validator) CheckStringURI(token interface{}, s string) bool {
 	return true
 }
 
+func (v *Validator) CheckArrayLengthMin(token interface{}, value interface{}, min int) bool {
+	var length int
+
+	checkArray(value, &length)
+
+	return v.Check(token, length >= min, "arrayTooSmall",
+		"array must contain %d or more elements", min)
+}
+
+func (v *Validator) CheckArrayLengthMax(token interface{}, value interface{}, max int) bool {
+	var length int
+
+	checkArray(value, &length)
+
+	return v.Check(token, length <= max, "arrayTooLarge",
+		"array must contain %d or less elements", max)
+}
+
+func (v *Validator) CheckArrayLengthMinMax(token interface{}, value interface{}, min, max int) bool {
+	if !v.CheckArrayLengthMin(token, value, min) {
+		return false
+	}
+
+	return v.CheckArrayLengthMax(token, value, max)
+}
+
+func (v *Validator) CheckArrayNotEmpty(token interface{}, value interface{}) bool {
+	var length int
+
+	checkArray(value, &length)
+
+	return v.Check(token, length > 0, "emptyArray", "array must not be empty")
+}
+
+func checkArray(value interface{}, plen *int) {
+	valueType := reflect.TypeOf(value)
+
+	switch valueType.Kind() {
+	case reflect.Slice:
+		*plen = reflect.ValueOf(value).Len()
+
+	case reflect.Array:
+		*plen = valueType.Len()
+
+	default:
+		panic(fmt.Sprintf("value is not a slice or array"))
+	}
+}
+
 func (v *Validator) CheckOptionalObject(token interface{}, value interface{}) bool {
 	if !checkObject(value) {
 		return true
