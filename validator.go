@@ -65,7 +65,7 @@ func NewValidator() *Validator {
 	return &Validator{}
 }
 
-func (v *Validator) Error() ValidationErrors {
+func (v *Validator) Error() error {
 	if len(v.Errors) == 0 {
 		return nil
 	}
