@@ -78,7 +78,7 @@ func TestValidate(t *testing.T) {
 		if assert.Equal(1, len(validationErrs)) {
 			validationErr = validationErrs[0]
 			assert.Equal("/String", validationErr.Pointer.String())
-			assert.Equal("stringTooShort", validationErr.Code)
+			assert.Equal("string_too_short", validationErr.Code)
 		}
 	}
 
@@ -94,7 +94,7 @@ func TestValidate(t *testing.T) {
 		if assert.Equal(1, len(validationErrs)) {
 			validationErr = validationErrs[0]
 			assert.Equal("/Tag", validationErr.Pointer.String())
-			assert.Equal("invalidValue", validationErr.Code)
+			assert.Equal("invalid_value", validationErr.Code)
 		}
 	}
 
@@ -115,11 +115,11 @@ func TestValidate(t *testing.T) {
 		if assert.Equal(2, len(validationErrs)) {
 			validationErr = validationErrs[0]
 			assert.Equal("/Bars/1", validationErr.Pointer.String())
-			assert.Equal("missingValue", validationErr.Code)
+			assert.Equal("missing_value", validationErr.Code)
 
 			validationErr = validationErrs[1]
 			assert.Equal("/Bars/3", validationErr.Pointer.String())
-			assert.Equal("missingValue", validationErr.Code)
+			assert.Equal("missing_value", validationErr.Code)
 		}
 	}
 
@@ -142,20 +142,20 @@ func TestValidate(t *testing.T) {
 		if assert.Equal(4, len(validationErrs)) {
 			validationErr = validationErrs[0]
 			assert.Equal("/Bars/0", validationErr.Pointer.String())
-			assert.Equal("missingValue", validationErr.Code)
+			assert.Equal("missing_value", validationErr.Code)
 
 			validationErr = validationErrs[1]
 			assert.Equal("/Bars/1/Integers/0", validationErr.Pointer.String())
-			assert.Equal("integerTooLarge", validationErr.Code)
+			assert.Equal("integer_too_large", validationErr.Code)
 
 			validationErr = validationErrs[2]
 			assert.Equal("/Bars/2/Integers/1", validationErr.Pointer.String())
-			assert.Equal("integerTooLarge", validationErr.Code)
+			assert.Equal("integer_too_large", validationErr.Code)
 
 			validationErr = validationErrs[3]
 			assert.Equal("/BarTable/foo/Integers/0",
 				validationErr.Pointer.String())
-			assert.Equal("integerTooLarge", validationErr.Code)
+			assert.Equal("integer_too_large", validationErr.Code)
 		}
 	}
 
@@ -166,7 +166,7 @@ func TestValidate(t *testing.T) {
 		if assert.Equal(1, len(validationErrs)) {
 			validationErr = validationErrs[0]
 			assert.Equal("", validationErr.Pointer.String())
-			assert.Equal("invalidValueType", validationErr.Code)
+			assert.Equal("invalid_value_type", validationErr.Code)
 		}
 	}
 
@@ -177,7 +177,7 @@ func TestValidate(t *testing.T) {
 		if assert.Equal(1, len(validationErrs)) {
 			validationErr = validationErrs[0]
 			assert.Equal("/String", validationErr.Pointer.String())
-			assert.Equal("invalidValueType", validationErr.Code)
+			assert.Equal("invalid_value_type", validationErr.Code)
 		}
 	}
 
@@ -192,7 +192,7 @@ func TestValidate(t *testing.T) {
 		if assert.Equal(1, len(validationErrs)) {
 			validationErr = validationErrs[0]
 			assert.Equal("/Bars/Integers", validationErr.Pointer.String())
-			assert.Equal("invalidValueType", validationErr.Code)
+			assert.Equal("invalid_value_type", validationErr.Code)
 		}
 	}
 }

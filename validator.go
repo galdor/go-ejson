@@ -109,12 +109,12 @@ func (v *Validator) Check(token interface{}, value bool, code, format string, ar
 }
 
 func (v *Validator) CheckIntMin(token interface{}, i int, min int) bool {
-	return v.Check(token, i >= min, "integerTooSmall",
+	return v.Check(token, i >= min, "integer_too_small",
 		"integer must be greater or equal to %d", min)
 }
 
 func (v *Validator) CheckIntMax(token interface{}, i int, max int) bool {
-	return v.Check(token, i <= max, "integerTooLarge",
+	return v.Check(token, i <= max, "integer_too_large",
 		"integer must be lower or equal to %d", max)
 }
 
@@ -127,12 +127,12 @@ func (v *Validator) CheckIntMinMax(token interface{}, i int, min, max int) bool 
 }
 
 func (v *Validator) CheckFloatMin(token interface{}, i, min float64) bool {
-	return v.Check(token, i >= min, "floatTooSmall",
+	return v.Check(token, i >= min, "float_too_small",
 		"float %f must be greater or equal to %f", i, min)
 }
 
 func (v *Validator) CheckFloatMax(token interface{}, i, max float64) bool {
-	return v.Check(token, i <= max, "floatTooLarge",
+	return v.Check(token, i <= max, "float_too_large",
 		"float %f must be lower or equal to %f", i, max)
 }
 
@@ -145,12 +145,12 @@ func (v *Validator) CheckFloatMinMax(token interface{}, i, min, max float64) boo
 }
 
 func (v *Validator) CheckStringLengthMin(token interface{}, s string, min int) bool {
-	return v.Check(token, len(s) >= min, "stringTooShort",
+	return v.Check(token, len(s) >= min, "string_too_short",
 		"string length must be greater or equal to %d", min)
 }
 
 func (v *Validator) CheckStringLengthMax(token interface{}, s string, max int) bool {
-	return v.Check(token, len(s) <= max, "stringTooLong",
+	return v.Check(token, len(s) <= max, "string_too_long",
 		"string length must be lower or equal to %d", max)
 }
 
@@ -163,7 +163,7 @@ func (v *Validator) CheckStringLengthMinMax(token interface{}, s string, min, ma
 }
 
 func (v *Validator) CheckStringNotEmpty(token interface{}, s string) bool {
-	return v.Check(token, s != "", "missingOrEmptyString",
+	return v.Check(token, s != "", "missing_or_empty_string",
 		"missing or empty string")
 }
 
@@ -208,14 +208,14 @@ func (v *Validator) CheckStringValue(token interface{}, value interface{}, value
 			buf.WriteString(s2)
 		}
 
-		v.AddError(token, "invalidValue", "%s", buf.String())
+		v.AddError(token, "invalid_value", "%s", buf.String())
 	}
 
 	return found
 }
 
 func (v *Validator) CheckStringMatch(token interface{}, s string, re *regexp.Regexp) bool {
-	return v.CheckStringMatch2(token, s, re, "invalidStringFormat",
+	return v.CheckStringMatch2(token, s, re, "invalid_string_format",
 		"string must match the following regular expression: %s",
 		re.String())
 }
@@ -235,12 +235,12 @@ func (v *Validator) CheckStringURI(token interface{}, s string) bool {
 
 	uri, err := url.Parse(s)
 	if err != nil {
-		v.AddError(token, "invalidURIFormat", "string must be a valid uri")
+		v.AddError(token, "invalid_uri_format", "string must be a valid uri")
 		return false
 	}
 
 	if uri.Scheme == "" {
-		v.AddError(token, "missingURIScheme", "uri must have a scheme")
+		v.AddError(token, "missing_uri_scheme", "uri must have a scheme")
 		return false
 	}
 
@@ -252,7 +252,7 @@ func (v *Validator) CheckArrayLengthMin(token interface{}, value interface{}, mi
 
 	checkArray(value, &length)
 
-	return v.Check(token, length >= min, "arrayTooSmall",
+	return v.Check(token, length >= min, "array_too_small",
 		"array must contain %d or more elements", min)
 }
 
@@ -261,7 +261,7 @@ func (v *Validator) CheckArrayLengthMax(token interface{}, value interface{}, ma
 
 	checkArray(value, &length)
 
-	return v.Check(token, length <= max, "arrayTooLarge",
+	return v.Check(token, length <= max, "array_too_large",
 		"array must contain %d or less elements", max)
 }
 
@@ -278,7 +278,7 @@ func (v *Validator) CheckArrayNotEmpty(token interface{}, value interface{}) boo
 
 	checkArray(value, &length)
 
-	return v.Check(token, length > 0, "emptyArray", "array must not be empty")
+	return v.Check(token, length > 0, "empty_array", "array must not be empty")
 }
 
 func checkArray(value interface{}, plen *int) {
@@ -306,7 +306,7 @@ func (v *Validator) CheckOptionalObject(token interface{}, value interface{}) bo
 
 func (v *Validator) CheckObject(token interface{}, value interface{}) bool {
 	if !checkObject(value) {
-		v.AddError(token, "missingValue", "missing value")
+		v.AddError(token, "missing_value", "missing value")
 		return false
 	}
 

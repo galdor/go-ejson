@@ -57,7 +57,7 @@ func ConvertUnmarshallingError(err error) error {
 		return ValidationErrors{
 			&ValidationError{
 				Pointer: pointer,
-				Code:    "invalidValueType",
+				Code:    "invalid_value_type",
 				Message: message,
 			},
 		}
