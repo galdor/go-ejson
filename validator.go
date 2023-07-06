@@ -7,6 +7,8 @@ import (
 	"reflect"
 	"regexp"
 	"strconv"
+
+	"github.com/galdor/go-uuid"
 )
 
 type ValidationError struct {
@@ -245,6 +247,11 @@ func (v *Validator) CheckStringURI(token interface{}, s string) bool {
 	}
 
 	return true
+}
+
+func (v *Validator) CheckUUID(token interface{}, value uuid.UUID) bool {
+	return v.Check(token, !value.Equal(uuid.Nil), "null_uuid",
+		"missing or null uuid")
 }
 
 func (v *Validator) CheckArrayLengthMin(token interface{}, value interface{}, min int) bool {
