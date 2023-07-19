@@ -2,6 +2,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/galdor/go-program v0.0.0-20230403162644-22adfbe9fbab h1:czJoR/JfIjVSCadg2h9Br4AmcdWfwfbgeArAJKTdWMY=
 github.com/galdor/go-program v0.0.0-20230403162644-22adfbe9fbab/go.mod h1:KnVdVzlic6wXk1wARM0MRJ2xviiZKgNA02bBjb8yTtc=
+github.com/galdor/go-uuid v0.0.0-20230418134831-d236b757febe h1:4SrWA+SCJDlEsbsfdvKdxlsVYMfzmyBJdMHXDkLRGiE=
+github.com/galdor/go-uuid v0.0.0-20230418134831-d236b757febe/go.mod h1:IsTvYf6zc1cSS4IzlFOuBSP4preSKoB73uGgx98kMjg=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.8.3 h1:RP3t2pwF7cMEbC1dqtB6poj3niw/9gnV4Cjg5oW5gtY=
