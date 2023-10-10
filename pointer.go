@@ -109,6 +109,8 @@ func (p Pointer) Child(tokens ...interface{}) Pointer {
 		case Pointer:
 			p2 = append(p2, v...)
 
+		case nil:
+
 		default:
 			panic(fmt.Sprintf("invalid json pointer token %#v (%T)",
 				token, token))
