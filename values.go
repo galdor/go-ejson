@@ -11,54 +11,52 @@ func (err *InvalidValueError) Error() string {
 		err.Value, err.Value)
 }
 
-type Value interface{}
-
-func IsNumber(v Value) bool {
+func IsNumber(v interface{}) bool {
 	_, ok := v.(float64)
 	return ok
 }
 
-func IsString(v Value) bool {
+func IsString(v interface{}) bool {
 	_, ok := v.(string)
 	return ok
 }
 
-func IsBoolean(v Value) bool {
+func IsBoolean(v interface{}) bool {
 	_, ok := v.(bool)
 	return ok
 }
 
-func IsArray(v Value) bool {
-	_, ok := v.([]Value)
+func IsArray(v interface{}) bool {
+	_, ok := v.([]interface{})
 	return ok
 }
 
-func IsObject(v Value) bool {
-	_, ok := v.(map[string]Value)
+func IsObject(v interface{}) bool {
+	_, ok := v.(map[string]interface{})
 	return ok
 }
 
-func AsNumber(v Value) float64 {
+func AsNumber(v interface{}) float64 {
 	return v.(float64)
 }
 
-func AsString(v Value) string {
+func AsString(v interface{}) string {
 	return v.(string)
 }
 
-func AsBoolean(v Value) bool {
+func AsBoolean(v interface{}) bool {
 	return v.(bool)
 }
 
-func AsArray(v Value) []Value {
-	return v.([]Value)
+func AsArray(v interface{}) []interface{} {
+	return v.([]interface{})
 }
 
-func AsObject(v Value) map[string]Value {
-	return v.(map[string]Value)
+func AsObject(v interface{}) map[string]interface{} {
+	return v.(map[string]interface{})
 }
 
-func Equal(v1, v2 Value) bool {
+func Equal(v1, v2 interface{}) bool {
 	switch {
 	case IsNumber(v1) && IsNumber(v2):
 		return AsNumber(v1) == AsNumber(v2)
@@ -109,7 +107,7 @@ func Equal(v1, v2 Value) bool {
 	return false
 }
 
-func ObjectKeys(v Value) []string {
+func ObjectKeys(v interface{}) []string {
 	obj := AsObject(v)
 
 	keys := make([]string, len(obj))
@@ -123,10 +121,10 @@ func ObjectKeys(v Value) []string {
 	return keys
 }
 
-func ObjectValues(v Value) []Value {
+func ObjectValues(v interface{}) []interface{} {
 	obj := AsObject(v)
 
-	values := make([]Value, len(obj))
+	values := make([]interface{}, len(obj))
 
 	i := 0
 	for _, value := range obj {
