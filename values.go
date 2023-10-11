@@ -11,6 +11,10 @@ func (err *InvalidValueError) Error() string {
 		err.Value, err.Value)
 }
 
+func IsNull(v interface{}) bool {
+	return v == nil
+}
+
 func IsNumber(v interface{}) bool {
 	_, ok := v.(float64)
 	return ok
@@ -58,6 +62,9 @@ func AsObject(v interface{}) map[string]interface{} {
 
 func Equal(v1, v2 interface{}) bool {
 	switch {
+	case IsNull(v1) && IsNull(v2):
+		return true
+
 	case IsNumber(v1) && IsNumber(v2):
 		return AsNumber(v1) == AsNumber(v2)
 
