@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"regexp"
 	"strconv"
+	"unicode/utf8"
 
 	"github.com/galdor/go-uuid"
 )
@@ -151,12 +152,14 @@ func (v *Validator) CheckFloatMinMax(token interface{}, i, min, max float64) boo
 }
 
 func (v *Validator) CheckStringLengthMin(token interface{}, s string, min int) bool {
-	return v.Check(token, len(s) >= min, "string_too_short",
+	length := utf8.RuneCountInString(s)
+	return v.Check(token, length >= min, "string_too_short",
 		"string length must be greater or equal to %d", min)
 }
 
 func (v *Validator) CheckStringLengthMax(token interface{}, s string, max int) bool {
-	return v.Check(token, len(s) <= max, "string_too_long",
+	length := utf8.RuneCountInString(s)
+	return v.Check(token, length <= max, "string_too_long",
 		"string length must be lower or equal to %d", max)
 }
 
