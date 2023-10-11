@@ -39,7 +39,11 @@ func (err ValidationError) Error() string {
 func (errs ValidationErrors) Error() string {
 	var buf bytes.Buffer
 
-	buf.WriteString("invalid data:")
+	buf.WriteString("invalid data")
+
+	if len(errs) > 0 {
+		buf.WriteByte(':')
+	}
 
 	for _, err := range errs {
 		buf.WriteString("\n  ")
