@@ -133,6 +133,24 @@ func (v *Validator) CheckIntMinMax(token interface{}, i int, min, max int) bool 
 	return v.CheckIntMax(token, i, max)
 }
 
+func (v *Validator) CheckInt64Min(token interface{}, i, min int64) bool {
+	return v.Check(token, i >= min, "integer_too_small",
+		"integer must be greater or equal to %d", min)
+}
+
+func (v *Validator) CheckInt64Max(token interface{}, i, max int64) bool {
+	return v.Check(token, i <= max, "integer_too_large",
+		"integer must be lower or equal to %d", max)
+}
+
+func (v *Validator) CheckInt64MinMax(token interface{}, i, min, max int64) bool {
+	if !v.CheckInt64Min(token, i, min) {
+		return false
+	}
+
+	return v.CheckInt64Max(token, i, max)
+}
+
 func (v *Validator) CheckFloatMin(token interface{}, i, min float64) bool {
 	return v.Check(token, i >= min, "float_too_small",
 		"float %f must be greater or equal to %f", i, min)
