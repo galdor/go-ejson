@@ -274,21 +274,27 @@ func (v *Validator) CheckStringURI(token interface{}, s string) bool {
 	return true
 }
 
-func (v *Validator) CheckUUID(token interface{}, value string) bool {
+func (v *Validator) CheckUUID(token interface{}, value interface{}) bool {
 	var id uuid.UUID
 
-	if !v.CheckStringNotEmpty(token, value) {
-		return false
+	switch value2 := value.(type) {
+	case string:
+		if !v.CheckStringNotEmpty(token, value2) {
+			return false
+		}
+
+		ok := v.Check(token, id.Parse(value2) == nil, "invalid_uuid",
+			"string must be a valid uuid")
+		if !ok {
+			return false
+		}
+
+	case uuid.UUID:
+		id = value2
 	}
 
-	ok := v.Check(token, id.Parse(value) == nil, "invalid_uuid",
-		"string must be a valid uuid")
-	if !ok {
-		return false
-	}
-
-	return v.Check(token, !id.Equal(uuid.Nil), "invalid_uuid",
-		"string must not be a null uuid")
+	return v.Check(token, !id.Equal(uuid.Nil), "missing_or_null_uuid",
+		"missing or null uuid")
 }
 
 func (v *Validator) CheckArrayLengthMin(token interface{}, value interface{}, min int) bool {
