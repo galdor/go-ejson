@@ -196,3 +196,54 @@ func TestValidate(t *testing.T) {
 		}
 	}
 }
+
+func TestValidateDNSLabel(t *testing.T) {
+	tests := []struct {
+		s     string
+		valid bool
+		code  string
+	}{
+		{"a", true, ""},
+		{"abc", true, ""},
+		{"abc-def", true, ""},
+		{"012-345", true, ""},
+		{"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+			true, ""}, // 63 characters
+
+		{"", false, "missing_or_empty_string"},
+		{"-", false, "invalid_dns_label"},
+		{"-abc", false, "invalid_dns_label"},
+		{"abc-", false, "invalid_dns_label"},
+		{"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+			false, "dns_label_too_long"}, // 64 characters
+	}
+
+	for _, test := range tests {
+		v := NewValidator()
+		valid := v.CheckDNSLabel("test", test.s)
+
+		var code string
+		if !valid {
+			if len(v.Errors) == 0 {
+				t.Errorf("validation failed without any validation error")
+				continue
+			}
+
+			code = v.Errors[0].Code
+		}
+
+		switch {
+		case valid && !test.valid:
+			t.Errorf("validation of string %q succeeded but should have "+
+				"failed with code %q", test.s, test.code)
+
+		case !valid && test.valid:
+			t.Errorf("validation of string %q failed with code %q",
+				test.s, code)
+
+		case !valid && test.code != code:
+			t.Errorf("validation of string %q failed with code %q but "+
+				"should have failed with code %q", test.s, code, test.code)
+		}
+	}
+}

@@ -297,6 +297,40 @@ func (v *Validator) CheckUUID(token interface{}, value interface{}) bool {
 		"missing or null uuid")
 }
 
+func (v *Validator) CheckDNSLabel(token interface{}, s string) bool {
+	const MaxDNSLabelLength = 63
+
+	isAlNum := func(c byte) bool {
+		return (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')
+	}
+
+	valid := v.CheckStringNotEmpty(token, s)
+
+	if len(s) > MaxDNSLabelLength {
+		v.AddError(token, "dns_label_too_long",
+			"dns label must be %d character long at most", MaxDNSLabelLength)
+		valid = false
+	}
+
+	if len(s) > 0 && (!isAlNum(s[0]) || !isAlNum(s[len(s)-1])) {
+		v.AddError(token, "invalid_dns_label",
+			"dns label must start and end with a lower case alphanumeric "+
+				"character")
+		valid = false
+	}
+
+	for i := 1; i < len(s)-1; i++ {
+		if !(isAlNum(s[i]) || s[i] == '-') {
+			v.AddError(token, "invalid_dns_label",
+				"dns label must only contain lower case alphanumeric "+
+					"characters and minus characters")
+			valid = false
+		}
+	}
+
+	return valid
+}
+
 func (v *Validator) CheckArrayLengthMin(token interface{}, value interface{}, min int) bool {
 	var length int
 
