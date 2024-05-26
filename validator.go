@@ -390,7 +390,7 @@ func (v *Validator) CheckOptionalObject(token interface{}, value interface{}) bo
 
 func (v *Validator) CheckObject(token interface{}, value interface{}) bool {
 	if !checkObject(value) {
-		v.AddError(token, "missing_value", "missing value")
+		v.AddError(token, "missing_or_null_value", "missing or null value")
 		return false
 	}
 

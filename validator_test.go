@@ -115,11 +115,11 @@ func TestValidate(t *testing.T) {
 		if assert.Equal(2, len(validationErrs)) {
 			validationErr = validationErrs[0]
 			assert.Equal("/Bars/1", validationErr.Pointer.String())
-			assert.Equal("missing_value", validationErr.Code)
+			assert.Equal("missing_or_null_value", validationErr.Code)
 
 			validationErr = validationErrs[1]
 			assert.Equal("/Bars/3", validationErr.Pointer.String())
-			assert.Equal("missing_value", validationErr.Code)
+			assert.Equal("missing_or_null_value", validationErr.Code)
 		}
 	}
 
@@ -142,7 +142,7 @@ func TestValidate(t *testing.T) {
 		if assert.Equal(4, len(validationErrs)) {
 			validationErr = validationErrs[0]
 			assert.Equal("/Bars/0", validationErr.Pointer.String())
-			assert.Equal("missing_value", validationErr.Code)
+			assert.Equal("missing_or_null_value", validationErr.Code)
 
 			validationErr = validationErrs[1]
 			assert.Equal("/Bars/1/Integers/0", validationErr.Pointer.String())
