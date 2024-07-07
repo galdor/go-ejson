@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"os"
 
-	jsonpointer "github.com/galdor/go-ejson"
-	"github.com/galdor/go-program"
+	jsonpointer "go.n16f.net/ejson"
+	"go.n16f.net/program"
 )
 
 func main() {

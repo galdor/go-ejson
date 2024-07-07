@@ -8,9 +8,8 @@ The EJSON library contains multiple utilities to work with JSON:
   structures.
 
 ## Usage
-Refer to the [Go package
-documentation](https://pkg.go.dev/github.com/galdor/go-ejson) for
-information about the API.
+Refer to the [Go package documentation](https://pkg.go.dev/go.n16f.net/ejson)
+for information about the API.
 
 See the [example programs](cmd/) for practical use cases.
 

@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"unicode/utf8"
 
-	"github.com/galdor/go-uuid"
+	"go.n16f.net/uuid"
 )
 
 type ValidationError struct {
