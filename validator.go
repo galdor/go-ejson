@@ -2,11 +2,14 @@ package ejson
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
+	"net"
 	"net/url"
 	"reflect"
 	"regexp"
 	"strconv"
+	"strings"
 	"unicode/utf8"
 
 	"go.n16f.net/uuid"
@@ -297,38 +300,94 @@ func (v *Validator) CheckUUID(token interface{}, value interface{}) bool {
 		"missing or null uuid")
 }
 
-func (v *Validator) CheckDNSLabel(token interface{}, s string) bool {
-	const MaxDNSLabelLength = 63
+func (v *Validator) CheckListenAddress(token any, s string) {
+	if _, _, err := net.SplitHostPort(s); err != nil {
+		var msg string
+		var addrErr *net.AddrError
 
-	isAlNum := func(c byte) bool {
-		return (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')
+		if errors.As(err, &addrErr) {
+			msg = addrErr.Err
+		} else {
+			msg = err.Error()
+		}
+
+		v.AddError(token, "invalid_address", "invalid address: %v", msg)
+	}
+}
+
+func (v *Validator) CheckDomainName(token any, s string) {
+	addError := func(format string, args ...any) {
+		v.AddError(token, "invalid_domain_name", format, args...)
 	}
 
-	valid := v.CheckStringNotEmpty(token, s)
-
-	if len(s) > MaxDNSLabelLength {
-		v.AddError(token, "dns_label_too_long",
-			"dns label must be %d character long at most", MaxDNSLabelLength)
-		valid = false
+	// If it is an IP address, it is a valid domain but not a valid domain name
+	if net.ParseIP(s) != nil {
+		addError("IP address is not a valid domain name")
+		return
 	}
 
-	if len(s) > 0 && (!isAlNum(s[0]) || !isAlNum(s[len(s)-1])) {
-		v.AddError(token, "invalid_dns_label",
-			"dns label must start and end with a lower case alphanumeric "+
-				"character")
-		valid = false
+	// RFC 952 DOD INTERNET HOST TABLE SPECIFICATION
+	//
+	// <domainname> ::= <hname>
+	// <hname> ::= <name>*["."<name>]
+	// <name>  ::= <let>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
+
+	// RFC 1034 3.5. Preferred name syntax
+	//
+	// "Labels must be 63 characters or less"
+
+	// RFC 1123 2. GENERAL ISSUES
+	//
+	// "the restriction on the first character is relaxed to allow either a
+	// letter or a digit. Host software MUST support this more liberal syntax."
+
+	const maxLabelLength = 63
+
+	isLetter := func(c byte) bool {
+		return c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z'
 	}
 
-	for i := 1; i < len(s)-1; i++ {
-		if !(isAlNum(s[i]) || s[i] == '-') {
-			v.AddError(token, "invalid_dns_label",
-				"dns label must only contain lower case alphanumeric "+
-					"characters and minus characters")
-			valid = false
+	isDigit := func(c byte) bool {
+		return c >= '0' && c <= '9'
+	}
+
+	labels := strings.Split(s, ".")
+labelLoop:
+	for _, label := range labels {
+		if len(label) == 0 {
+			addError("invalid empty domain name label")
+			return
+		}
+
+		for i := range len(label) {
+			if label[i] > 0x7f {
+				addError("domain name labels must only contain 7-bit ASCII " +
+					"characters")
+				continue labelLoop
+			}
+		}
+
+		if len(label) > maxLabelLength {
+			addError("domain name label must be %d character long at most",
+				maxLabelLength)
+			return
+		}
+
+		if c := label[0]; !(isLetter(c) || isDigit(c)) {
+			addError("domain name label must start with a letter or digit")
+		}
+
+		if c := label[len(label)-1]; !(isLetter(c) || isDigit(c)) {
+			addError("domain name label must end with a letter or digit")
+		}
+
+		for i := 1; i < len(label)-1; i++ {
+			if c := label[i]; !(isLetter(c) || isDigit(c) || c == '-') {
+				addError("domain name label character must be a letter, " +
+					"a digit or a '-' character")
+			}
 		}
 	}
-
-	return valid
 }
 
 func (v *Validator) CheckArrayLengthMin(token interface{}, value interface{}, min int) bool {
