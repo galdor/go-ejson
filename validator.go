@@ -300,7 +300,7 @@ func (v *Validator) CheckUUID(token interface{}, value interface{}) bool {
 		"missing or null uuid")
 }
 
-func (v *Validator) CheckListenAddress(token any, s string) {
+func (v *Validator) CheckNetworkAddress(token any, s string) {
 	if _, _, err := net.SplitHostPort(s); err != nil {
 		var msg string
 		var addrErr *net.AddrError
