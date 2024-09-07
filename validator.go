@@ -301,7 +301,8 @@ func (v *Validator) CheckUUID(token interface{}, value interface{}) bool {
 }
 
 func (v *Validator) CheckNetworkAddress(token any, s string) {
-	if _, _, err := net.SplitHostPort(s); err != nil {
+	_, portString, err := net.SplitHostPort(s)
+	if err != nil {
 		var msg string
 		var addrErr *net.AddrError
 
@@ -312,6 +313,22 @@ func (v *Validator) CheckNetworkAddress(token any, s string) {
 		}
 
 		v.AddError(token, "invalid_address", "invalid address: %v", msg)
+		return
+	}
+
+	if portString == "" {
+		v.AddError(token, "empty_port_number", "empty port number")
+	} else {
+		port, err := strconv.ParseInt(portString, 10, 64)
+		if err != nil {
+			v.AddError(token, "invalid_port_number", "invalid port number")
+		} else if port < 1 {
+			v.AddError(token, "invalid_port_number",
+				"port number must be greater than 0")
+		} else if port >= 65535 {
+			v.AddError(token, "invalid_port_number",
+				"port number must be lower than 65535")
+		}
 	}
 }
 
