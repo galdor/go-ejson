@@ -407,6 +407,30 @@ labelLoop:
 	}
 }
 
+func (v *Validator) CheckEmailAddress(token any, s string) {
+	// Email validation is one of the most nitpicked subject in the software
+	// industry. We keep validation to a minimum: one can always write a more
+	// stringent method if needs be.
+
+	addError := func(format string, args ...any) {
+		v.AddError(token, "invalid_email_address", format, args...)
+	}
+
+	localPart, domain, found := strings.Cut(s, "@")
+	if !found {
+		addError("missing '@' separator")
+		return
+	}
+
+	if len(domain) == 0 {
+		addError("invalid empty domain")
+	}
+
+	if len(localPart) == 0 {
+		addError("invalid empty local part")
+	}
+}
+
 func (v *Validator) CheckArrayLengthMin(token interface{}, value interface{}, min int) bool {
 	var length int
 
