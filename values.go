@@ -7,7 +7,7 @@ type InvalidValueError struct {
 }
 
 func (err *InvalidValueError) Error() string {
-	return fmt.Sprintf("%#v (%T) is not a valid json value",
+	return fmt.Sprintf("%#v (%T) is not a valid JSON value",
 		err.Value, err.Value)
 }
 

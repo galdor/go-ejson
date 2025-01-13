@@ -112,7 +112,7 @@ func (p Pointer) Child(tokens ...interface{}) Pointer {
 		case nil:
 
 		default:
-			panic(fmt.Sprintf("invalid json pointer token %#v (%T)",
+			panic(fmt.Sprintf("invalid JSON pointer token %#v (%T)",
 				token, token))
 		}
 	}
