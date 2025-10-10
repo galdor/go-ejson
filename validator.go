@@ -508,15 +508,22 @@ func (v *Validator) CheckObjectArray(token interface{}, value interface{}) bool 
 
 	ok := true
 
-	v.WithChild(token, func() {
-		values := reflect.ValueOf(value)
+	if token != nil {
+		v.Push(token)
+	}
 
-		for i := 0; i < values.Len(); i++ {
-			child := values.Index(i).Interface()
-			childOk := v.CheckObject(strconv.Itoa(i), child)
-			ok = ok && childOk
+	values := reflect.ValueOf(value)
+	for i := 0; i < values.Len(); i++ {
+		child := values.Index(i).Interface()
+		childOk := v.CheckObject(strconv.Itoa(i), child)
+		ok = ok && childOk
+	}
+
+	defer func() {
+		if token != nil {
+			v.Pop()
 		}
-	})
+	}()
 
 	return ok
 }
