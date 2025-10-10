@@ -265,12 +265,12 @@ func (v *Validator) CheckStringURI(token interface{}, s string) bool {
 
 	uri, err := url.Parse(s)
 	if err != nil {
-		v.AddError(token, "invalid_uri_format", "string must be a valid uri")
+		v.AddError(token, "invalid_uri_format", "string must be a valid URI")
 		return false
 	}
 
 	if uri.Scheme == "" {
-		v.AddError(token, "missing_uri_scheme", "uri must have a scheme")
+		v.AddError(token, "missing_uri_scheme", "URI must have a scheme")
 		return false
 	}
 
@@ -287,7 +287,7 @@ func (v *Validator) CheckUUID(token interface{}, value interface{}) bool {
 		}
 
 		ok := v.Check(token, id.Parse(value2) == nil, "invalid_uuid",
-			"string must be a valid uuid")
+			"string must be a valid UUID")
 		if !ok {
 			return false
 		}
@@ -297,7 +297,7 @@ func (v *Validator) CheckUUID(token interface{}, value interface{}) bool {
 	}
 
 	return v.Check(token, !id.Equal(uuid.Nil), "missing_or_null_uuid",
-		"missing or null uuid")
+		"missing or null UUID")
 }
 
 func (v *Validator) CheckNetworkAddress(token any, s string) {
