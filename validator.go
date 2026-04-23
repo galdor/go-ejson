@@ -154,22 +154,26 @@ func (v *Validator) CheckInt64MinMax(token interface{}, i, min, max int64) bool 
 	return v.CheckInt64Max(token, i, max)
 }
 
-func (v *Validator) CheckFloatMin(token interface{}, i, min float64) bool {
-	return v.Check(token, i >= min, "float_too_small",
-		"float %f must be greater or equal to %f", i, min)
+func (v *Validator) CheckFloatMin(token interface{}, f, min float64) bool {
+	return v.Check(token, f >= min, "float_too_small",
+		"float %s must be greater or equal to %s",
+		strconv.FormatFloat(f, 'f', -1, 64),
+		strconv.FormatFloat(min, 'f', -1, 64))
 }
 
-func (v *Validator) CheckFloatMax(token interface{}, i, max float64) bool {
-	return v.Check(token, i <= max, "float_too_large",
-		"float %f must be lower or equal to %f", i, max)
+func (v *Validator) CheckFloatMax(token interface{}, f, max float64) bool {
+	return v.Check(token, f <= max, "float_too_large",
+		"float %s must be lower or equal to %s",
+		strconv.FormatFloat(f, 'f', -1, 64),
+		strconv.FormatFloat(max, 'f', -1, 64))
 }
 
-func (v *Validator) CheckFloatMinMax(token interface{}, i, min, max float64) bool {
-	if !v.CheckFloatMin(token, i, min) {
+func (v *Validator) CheckFloatMinMax(token interface{}, f, min, max float64) bool {
+	if !v.CheckFloatMin(token, f, min) {
 		return false
 	}
 
-	return v.CheckFloatMax(token, i, max)
+	return v.CheckFloatMax(token, f, max)
 }
 
 func (v *Validator) CheckStringLengthMin(token interface{}, s string, min int) bool {
