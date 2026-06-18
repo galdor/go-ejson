@@ -15,18 +15,35 @@ import (
 // (*json.Decoder).Token(). This would increase memory pressure, but this is
 // irrelevant for most use cases and would allow much better error reporting.
 
+type UnmarshalingOptions struct {
+	DisableValidation bool
+}
+
 func Unmarshal(data []byte, dest interface{}) error {
+	return Unmarshal2(data, dest, &UnmarshalingOptions{})
+}
+
+func Unmarshal2(data []byte, dest interface{}, opts *UnmarshalingOptions) error {
 	d := json.NewDecoder(bytes.NewReader(data))
-	return UnmarshalDecoder(d, dest)
+	return UnmarshalDecoder2(d, dest, opts)
 }
 
 func UnmarshalDecoder(d *json.Decoder, dest interface{}) error {
+	return UnmarshalDecoder2(d, dest, &UnmarshalingOptions{})
+}
+
+func UnmarshalDecoder2(d *json.Decoder, dest interface{}, opts *UnmarshalingOptions) error {
 	if err := d.Decode(dest); err != nil {
 		return ConvertUnmarshallingError(err)
 	}
 
-	return Validate(dest)
+	if !opts.DisableValidation {
+		if err := Validate(dest); err != nil {
+			return err
+		}
+	}
 
+	return nil
 }
 
 func UnmarshalReader(r io.Reader, dest interface{}) error {
